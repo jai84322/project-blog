@@ -14,8 +14,8 @@ mongoose.connect("mongodb+srv://jai84322:Bing%401234%23@demo.3li78.mongodb.net/p
 .catch(err => console.log(err));
 
 app.use('/',route);
-app.listen(process.env.PORT||5000,function(){
-    console.log('express app running on PORT'+(process.env.PORT||5000))
+app.listen(process.env.PORT||3000,function(){
+    console.log('express app running on PORT'+(process.env.PORT||3000))
 });
 
 
