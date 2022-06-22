@@ -10,7 +10,6 @@ const createAuthor = async function (req, res) {
 
         }
 
-
         if (!fname) {
             return res.status(400).send({ status: false, msg: "fname is missing" })
         }
@@ -34,18 +33,14 @@ const createAuthor = async function (req, res) {
         let uniqueEmail = await authorModel.findOne({ email: email })
 
         if (uniqueEmail) {
-            return res.status(400).send({ status: false, msg: "This email is already exist" })
-
+            return res.status(400).send({ status: false, msg: "This email already exists" })
         }
 
-
-
         let savedData = await authorModel.create(data)
-        res.status(201).send({ status: true, data: savedData })
+        return res.status(201).send({ status: true, data: savedData })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+       return res.status(500).send({ status: false, error: err.message })
     }
-
 
 }
 

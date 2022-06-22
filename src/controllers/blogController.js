@@ -2,9 +2,11 @@ const blogModel = require('../models/blogModel');
 const authorModel = require('../models/authorModel');
 
 const createBlog = async function (req, res) {
+    
     try {
         let data = req.body;
         let { title, body, authorId, category } = req.body;
+
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Please request data to be created" })
         }
@@ -36,5 +38,27 @@ const createBlog = async function (req, res) {
 
 }
 
-
 module.exports.createBlog = createBlog;
+
+
+const getBlogs = async function (req,res) {
+    // let {category, authorId, tags, subcategory} = req.query
+
+    // console.log(data)
+
+    // let blog = await blogModel.findOne({$in: [{isDeleted: false, isPublished: true}, {category: category}, {authorId: authorId}, {tags:tags}, {subcategory:subcategory}]   })
+
+    let data = req.query
+
+    let blog = await blogModel.find({$and: [{isDeleted: false, isPublished: true}, data] })
+
+    if (!blog[0]) {
+        return res.status(404).send({status: false, msg : "no document found"})
+    }
+
+    return res.status(200).send({status: true, data: blog})
+
+    
+}
+
+module.exports.getBlogs = getBlogs
