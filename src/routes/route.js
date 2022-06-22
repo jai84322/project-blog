@@ -12,8 +12,8 @@ const blogController = require('../controllers/blogController')
 router.post('/authors',authorController.createAuthor)
 router.post('/blogs',blogController.createBlog)
 router.get('/blogs',blogController.getBlogs)
-// router.put('/blogs/:blogId',blogController.updateBlogs)
-// router.delete('blogs/:blogId',blogController.)
-// router.delete('blogs',blogController.)
+router.put('/blogs/:blogId',blogController.updateBlogs)
+router.delete('blogs/:blogId',blogController.deleteBlogByPathParam)
+router.delete('blogs',blogController.deleteBlogsByQuery)
 
 module.exports=router;
