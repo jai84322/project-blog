@@ -1,6 +1,8 @@
 const blogModel = require('../models/blogModel');
 const authorModel = require('../models/authorModel');
 
+//  API - 2 || TO CREATE BLOGS
+
 const createBlog = async function (req, res) {
 
     try {
@@ -41,6 +43,8 @@ const createBlog = async function (req, res) {
 
 }
 
+// API- 3 || TO GET ALL BLOGS 
+
 const getBlogs = async function (req, res) {
     try {
         let data = req.query
@@ -56,10 +60,13 @@ const getBlogs = async function (req, res) {
     }
 }
 
+// API- 4 || TO UPDATE BLOGS 
+
 const updateBlogs = async function (req, res) {
     try {
         let data = req.body
         let blogId = req.params.blogId
+        let {tags, subcategory} = req.body
 
         if(!blogId) {
             return res.status(400).send({status: false, msg : "please enter the blog Id"})
@@ -70,25 +77,29 @@ const updateBlogs = async function (req, res) {
         }
 
         let checkBlogId = await blogModel.findById(blogId)
+        console.log(checkBlogId)
         if (!checkBlogId) {
             return res.status(404).send({status: false, msg : "no such blog exists"}) 
         }
 
-        // we have to sort this out for deletedAt and publishedAt
-        // tags and subcategory ko recheck karna hai 
-
         let updatedData = await blogModel.findOneAndUpdate(
             { _id: blogId, isDeleted : false },
-            data,
+            {data,  $push: { tags: tags, subcategory : subcategory} },
             { new: true }
         )
+
+        if (updatedData.isPublished === true) {
+            updatedData.publishedAt = Date.now()
+            return res.status(200).send({status:true, data: updatedData})
+        }
+
         return res.status(200).send({ status: true, data: updatedData })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
-
+// API- 5 || TO DELETE BLOGS WITH PATH PARAMETER
 
 const deleteBlogByPathParam = async function (req, res) {
     try {
@@ -118,6 +129,7 @@ const deleteBlogByPathParam = async function (req, res) {
     }
 }
 
+// API- 6 || DELETE BLOGS WITH QUERY PARAMETERS 
 
 const deleteBlogsByQuery = async function (req, res) {
 

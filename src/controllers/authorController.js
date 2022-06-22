@@ -2,6 +2,8 @@ const authorModel = require('../models/authorModel')
 const validator = require('email-validator')
 const passwordValidator = require('password-validator');
 
+// API- 1 || TO CREATE AUTHORS
+ 
 const createAuthor = async function (req, res) {
     try {
         
