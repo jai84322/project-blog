@@ -16,6 +16,9 @@ const createBlog = async function (req, res) {
         if (!body) {
             return res.status(400).send({ status: false, msg: "Please enter body" })
         }
+        if (body.length < 4) {
+            return res.status(400).send({status: false, msg: "body length should be more than 4 characters"})
+        }
         if (!authorId) {
             return res.status(400).send({ status: false, msg: "Please enter authorId" })
         }
@@ -31,9 +34,9 @@ const createBlog = async function (req, res) {
         }
 
         let createdBlog = await blogModel.create(data)
-        res.status(201).send({ status: true, msg: createdBlog })
+        res.status(201).send({ status: true, data: createdBlog })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+        res.status(500).send({ status: false, msg: err.message })
     }
 
 }
@@ -44,12 +47,12 @@ const getBlogs = async function (req, res) {
         let blog = await blogModel.find({ $and: [{ isDeleted: false, isPublished: true }, data] })
 
         if (!blog[0]) {
-            return res.status(404).send({ status: false, msg: "no document found" })
+            return res.status(404).send({ status: false, msg: "no such document found" })
         }
 
         return res.status(200).send({ status: true, data: blog })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+       return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
@@ -57,15 +60,31 @@ const updateBlogs = async function (req, res) {
     try {
         let data = req.body
         let blogId = req.params.blogId
-        console.log(blogId)
+
+        if(!blogId) {
+            return res.status(400).send({status: false, msg : "please enter the blog Id"})
+        }
+        
+        if(blogId.length !== 24) {
+            return res.status(400).send({status: false, msg : "please enter valid length of blog Id (24)"}) 
+        }
+
+        let checkBlogId = await blogModel.findById(blogId)
+        if (!checkBlogId) {
+            return res.status(404).send({status: false, msg : "no such blog exists"}) 
+        }
+
+        // we have to sort this out for deletedAt and publishedAt
+        // tags and subcategory ko recheck karna hai 
+
         let updatedData = await blogModel.findOneAndUpdate(
-            { _id: blogId },
+            { _id: blogId, isDeleted : false },
             data,
             { new: true }
         )
-        res.status(200).send({ status: true, data: updatedData })
+        return res.status(200).send({ status: true, data: updatedData })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
@@ -83,7 +102,6 @@ const deleteBlogByPathParam = async function (req, res) {
         }
 
         let checkBlog = await blogModel.findById(blogId)
-        console.log(checkBlog);
 
         if (!checkBlog) {
             return res.status(404).send({ status: false, msg: "document not found" })
@@ -96,7 +114,7 @@ const deleteBlogByPathParam = async function (req, res) {
         let deletedBlog = await blogModel.updateOne({ _id: blogId, isDeleted: false }, { isDeleted: true }, { new: true })
         return res.status(200).send({ status: true, data: deletedBlog })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
@@ -106,21 +124,30 @@ const deleteBlogsByQuery = async function (req, res) {
     try {
         let data = req.query
 
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({status: false, msg : "please enter a query"})
+        }
+
         let deleteData = await blogModel.updateMany(
             { isDeleted: false, data },
             { isDeleted: true },
             { new: true }
         )
-        res.status(200).send({ status: true, msg: deleteData })
+
+        if (!deleteData[0]) {
+            return res.status(404).send({status: false, msg : "no document found"})
+        }
+
+        return res.status(200).send({ status: true, data: deleteData })
     } catch (err) {
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
 
 
-module.exports.deleteBlogByPathParam = deleteBlogByPathParam
-module.exports.deleteBlogsByQuery = deleteBlogsByQuery
 module.exports.createBlog = createBlog;
 module.exports.getBlogs = getBlogs;
 module.exports.updateBlogs = updateBlogs;
+module.exports.deleteBlogByPathParam = deleteBlogByPathParam
+module.exports.deleteBlogsByQuery = deleteBlogsByQuery
