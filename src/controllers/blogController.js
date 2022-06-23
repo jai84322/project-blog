@@ -84,7 +84,7 @@ const updateBlogs = async function (req, res) {
 
         let updatedData = await blogModel.findOneAndUpdate(
             { _id: blogId, isDeleted : false },
-            {data,  $push: { tags: tags, subcategory : subcategory} },
+             data,   //$push: { tags: tags, subcategory : subcategory}
             { new: true }
         )
 

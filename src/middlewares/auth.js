@@ -1,24 +1,45 @@
 const jwt = require('jsonwebtoken')
+const blogModele = require('../models/blogModel')
 
-const authentication = async function (req,res,next) {
-  try {
-    let token = req.headers["x-api-key" || "X-Api-Key"]
-    
-    if (!token) {
-        return res.status(400).send({status: false, msg: "please send the token"})
-    }
+const authentication = async function (req, res, next) {
+    try {
+        let token = req.headers["x-api-key" || "X-Api-Key"]
 
-    let decodedToken = jwt.verify(token, "WaJaiDhi-radon")
+        if (!token) {
+            return res.status(400).send({ status: false, msg: "please send the token" })
+        }
 
-    // if (!decodedToken) {
-    //     return res.status(400).send({status: false, msg: "token is invalid"})
-    // }
+        let decodedToken = jwt.verify(token, "WaJaiDhi-radon")
 
-        next ()
+        // if (!decodedToken) {
+        //     return res.status(400).send({status: false, msg: "token is invalid"})
+        // }
+        req["decodedToken"] = decodedToken
+        next()
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
+}
+
+
+
+
+const authorization = async function (req, res, next) {
+    try {
+        let validAuthorId = req.decodedToken.authorId
+        let loginAuthor = req.params.blogId
+
+        let author = await blogModele.findById(loginAuthor)
+        if (author.authorId != validAuthorId) {
+            return res.status(403).send({ status: false, msg: "Author is not authorized" })
+
+        }
+        next()
+    } catch (err) {
+        return res.status(500).send({ status: false, msg: err.message })
     }
+}
 
 module.exports.authentication = authentication
+module.exports.authorization = authorization

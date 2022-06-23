@@ -12,10 +12,10 @@ router.post('/blogs', middleware.authentication, blogController.createBlog )
 
 router.get('/blogs', middleware.authentication, blogController.getBlogs )
 
-router.put('/blogs/:blogId', middleware.authentication, blogController.updateBlogs)
+router.put('/blogs/:blogId', middleware.authentication,middleware.authorization, blogController.updateBlogs)
 
-router.delete('/blogs/:blogId', middleware.authentication, blogController.deleteBlogByPathParam)
+router.delete('/blogs/:blogId', middleware.authentication,middleware.authorization, blogController.deleteBlogByPathParam)
 
-router.delete('/blogs', middleware.authentication, blogController.deleteBlogsByQuery)
+router.delete('/blogs', middleware.authentication,middleware.authorization, blogController.deleteBlogsByQuery)
 
 module.exports=router;
