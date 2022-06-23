@@ -84,7 +84,7 @@ const updateBlogs = async function (req, res) {
 
         let updatedData = await blogModel.findOneAndUpdate(
             { _id: blogId, isDeleted : false },
-             data,   //$push: { tags: tags, subcategory : subcategory}
+            data,   //$push: { tags: tags, subcategory : subcategory}
             { new: true }
         )
 
@@ -134,19 +134,19 @@ const deleteBlogByPathParam = async function (req, res) {
 const deleteBlogsByQuery = async function (req, res) {
 
     try {
-        let data = req.query
+        let {category, authorId, tags, subcategory, isPublished} = req.query
 
-        if (Object.keys(data).length == 0) {
-            return res.status(400).send({status: false, msg : "please enter a query"})
-        }
+        let deleteData = await blogModel.updateMany({ 
+            
+            isDeleted: false, $or: [{ authorId: authorId },
+            { isPublished: isPublished },
+            { tags: tags },
+            { category: category },
+            { subcategory: subcategory }] 
+        }, 
+            { isDeleted: true }, { new: true })
 
-        let deleteData = await blogModel.updateMany(
-            { isDeleted: false, data },
-            { isDeleted: true },
-            { new: true }
-        )
-
-        if (!deleteData[0]) {
+        if (!deleteData) {
             return res.status(404).send({status: false, msg : "no document found"})
         }
 
