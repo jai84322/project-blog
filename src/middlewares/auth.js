@@ -24,7 +24,6 @@ const authentication = async function (req, res, next) {
 
 
 
-
 const authorization = async function (req, res, next) {
     try {
         let validAuthorId = req.decodedToken.authorId
@@ -33,13 +32,21 @@ const authorization = async function (req, res, next) {
         let author = await blogModele.findById(loginAuthor)
         if (author.authorId != validAuthorId) {
             return res.status(403).send({ status: false, msg: "Author is not authorized" })
-
         }
+
         next()
+
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
 }
 
+const authorizationForQuery = async function (req,res,next) {
+    let data = req.query 
+    let 
+}
+
+
 module.exports.authentication = authentication
 module.exports.authorization = authorization
+module.exports.authorizationForQuery = authorizationForQuery
