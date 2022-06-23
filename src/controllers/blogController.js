@@ -77,7 +77,7 @@ const updateBlogs = async function (req, res) {
         }
 
         let checkBlogId = await blogModel.findById(blogId)
-        console.log(checkBlogId)
+        
         if (!checkBlogId) {
             return res.status(404).send({status: false, msg : "no such blog exists"}) 
         }
