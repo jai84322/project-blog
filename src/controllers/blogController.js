@@ -65,6 +65,7 @@ const getBlogs = async function (req, res) {
 const updateBlogs = async function (req, res) {
     try {
         let data = req.body
+        let {title, body, authorId, category, isPublished} = req.body
         let blogId = req.params.blogId
         let {tags, subcategory} = req.body
 
@@ -84,7 +85,14 @@ const updateBlogs = async function (req, res) {
 
         let updatedData = await blogModel.findOneAndUpdate(
             { _id: blogId, isDeleted : false },
-            data,   //$push: { tags: tags, subcategory : subcategory}
+            { 
+                title: title,
+                body: body,
+                category:category,
+                isPublished: isPublished,
+                authorId: authorId,
+                $push: { tags: tags, subcategory : subcategory},
+                },  
             { new: true }
         )
 
@@ -137,7 +145,8 @@ const deleteBlogsByQuery = async function (req, res) {
         let {category, authorId, tags, subcategory, isPublished} = req.query
 
         let deleteData = await blogModel.updateMany({ 
-            
+
+            authorId : req.decodedToken.authorId, 
             isDeleted: false, $or: [{ authorId: authorId },
             { isPublished: isPublished },
             { tags: tags },

@@ -11,9 +11,9 @@ const authentication = async function (req, res, next) {
 
         let decodedToken = jwt.verify(token, "WaJaiDhi-radon")
 
-        // if (!decodedToken) {
-        //     return res.status(400).send({status: false, msg: "token is invalid"})
-        // }
+        if (!decodedToken) {
+            return res.status(400).send({status: false, msg: "token is invalid"})
+        }
 
         req["decodedToken"] = decodedToken
 
@@ -53,10 +53,19 @@ const authorizationForQuery = async function (req,res,next) {
         return res.status(400).send({status: false, msg : "please enter a query"})
     }
 
-    let findAuthorId = await blogModel.findOne({authorId: req.decodedToken.authorId, $or: [{authorId : authorId}, {tags: tags}, {subcategory : subcategory}, {category: category}, {isPublished: isPublished} ] })
-    // console.log(findAuthorId);
+    let findAuthorId = await blogModel.find({
+        authorId : req.decodedToken.authorId, $or: [
+            {authorId : authorId}, 
+            {tags: tags}, 
+            {subcategory : subcategory}, 
+            {category: category}, 
+            {isPublished: isPublished}] 
+        }).select({_id:0, authorId:1})
 
-    if (!findAuthorId) {
+        console.log(findAuthorId)
+        
+
+    if (!findAuthorId[0]) {
         return res.status(404).send({status: false, msg: "document not found / you are not authorized"})
     }
 
