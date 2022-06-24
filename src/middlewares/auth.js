@@ -3,13 +3,15 @@ const blogModel = require('../models/blogModel')
 
 const authentication = async function (req, res, next) {
     try {
-        let token = req.headers["x-api-key" || "X-Api-Key"]
 
+        let token = req.headers["x-api-key" || "X-Api-Key"]
+        
         if (!token) {
             return res.status(400).send({ status: false, msg: "please send the token" })
         }
 
         let decodedToken = jwt.verify(token, "WaJaiDhi-radon")
+        // console.log(decodedToken)
 
         if (!decodedToken) {
             return res.status(400).send({status: false, msg: "token is invalid"})
@@ -29,10 +31,19 @@ const authentication = async function (req, res, next) {
 const authorization = async function (req, res, next) {
     try {
         let validAuthorId = req.decodedToken.authorId
-        let loginAuthor = req.params.blogId
+        let id = req.params.blogId
 
-        let author = await blogModel.findById(loginAuthor)
-        if (author.authorId != validAuthorId) {
+        if(id.length != 24) {
+            return res.status(400).send({status:false, msg: "Please enter proper length of author Id (24)"})
+        }
+        
+        let checkBlog = await blogModel.findById(id)
+        
+        if (!checkBlog) {
+            return res.status(404).send({status: false, msg : "no such blog exists"}) 
+        }
+
+        if (checkBlog.authorId != validAuthorId) {
             return res.status(403).send({ status: false, msg: "Author is not authorized" })
         }
 
@@ -47,7 +58,7 @@ const authorizationForQuery = async function (req,res,next) {
     
     let data = req.query
     let {authorId, category, tags, subcategory, isPublished} = req.query
-    let validAuthorId = req.decodedToken.authorId
+    // let validAuthorId = req.decodedToken.authorId
 
     if (Object.keys(data).length == 0) {
         return res.status(400).send({status: false, msg : "please enter a query"})
@@ -62,11 +73,8 @@ const authorizationForQuery = async function (req,res,next) {
             {isPublished: isPublished}] 
         }).select({_id:0, authorId:1})
 
-        console.log(findAuthorId)
-        
-
     if (!findAuthorId[0]) {
-        return res.status(404).send({status: false, msg: "document not found / you are not authorized"})
+        return res.status(404).send({status: false, msg: "document doesn't exist / you are not authorized"})
     }
 
     next()
