@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const blogModel = require('../models/blogModel')
+const authorController = require('../controllers/authorController')
 
 const authentication = async function (req, res, next) {
     try {
@@ -10,15 +11,22 @@ const authentication = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "please send the token" })
         }
 
+        let finalRightToken = req.rightToken
+        console.log(finalRightToken)
+
+        // if (token != finalRightToken) {
+        //     return res.status(400).send({status : false, msg : "token is invalid"})
+        // }
+
         let decodedToken = jwt.verify(token, "WaJaiDhi-radon")
-        // console.log(decodedToken)
+        console.log(decodedToken)
 
-        if (!decodedToken) {
-            return res.status(400).send({status: false, msg: "token is invalid"})
-        }
+        // if (!decodedToken) {
+        //     return res.status(400).send({status: false, msg: "jfdkasj"})
+        // }
 
-        req["decodedToken"] = decodedToken
-
+        // req["decodedToken"] = decodedToken
+            req.decodedToken = decodedToken
         next()
 
     } catch (err) {

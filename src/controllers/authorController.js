@@ -54,7 +54,7 @@ const createAuthor = async function (req, res) {
 
         let savedData = await authorModel.create(data)
         
-        return res.status(201).send({ status: true, data: savedData })
+        return res.status(201).send({ status: true, data: savedData  })
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -93,8 +93,10 @@ const loginAuthor = async function (req, res) {
             "WaJaiDhi-radon"
         )
 
+        // req["rightToken"] = token
+        // req.rightToken = token
         res.setHeader("x-api-key", token)
-
+        
         return res.status(200).send({ status: true, data: token })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
