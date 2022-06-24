@@ -13,6 +13,7 @@ que - can you check multiple values in one tag only ??
 4- authentication me token validation ka clear karna hai
 5- do we need to narrow down OR get all the documents which matches all the values of filter
 6- delete and update api me blogId nahi deta hai toh error handle karna hai ya nahi ? 
+7- 
 
 https://github.com/jai84322/project-blog.git
 
@@ -121,8 +122,6 @@ Refer below sample
   msg: ""
 }
 ```
-
-
 
 
 
