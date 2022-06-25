@@ -142,7 +142,8 @@ const deleteBlogsByQuery = async function (req, res) {
         {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
             { new: true })
 
-        if (!deleteData[0]) {
+            console.log(deleteData);
+        if (deleteData.modifiedCount == 0) {
             return res.status(404).send({status: false, msg : "document already deleted"})
         }
 

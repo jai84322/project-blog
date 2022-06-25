@@ -69,9 +69,10 @@ const authorizationForQuery = async function (req,res,next) {
             {category: category}, 
             {isPublished: isPublished}] 
         }).select({_id:0, authorId:1})
+        
 
     if (!findAuthorId[0]) {
-        return res.status(404).send({status: false, msg: "document doesn't exist / you are not authorized"})
+        return res.status(404).send({status: false, msg: "you are not authorized / document doesn't exist "})
     }
 
     next()
