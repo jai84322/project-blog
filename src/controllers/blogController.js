@@ -109,6 +109,7 @@ const updateBlogs = async function (req, res) {
 const deleteBlogByPathParam = async function (req, res) {
     try {
         let blogId = req.params.blogId
+       
 
         // let checkBlog = await blogModel.findById(blogId)
 

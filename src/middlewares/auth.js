@@ -25,7 +25,7 @@ const authorization = async function (req, res, next) {
     try {
         let validAuthorId = req.decodedToken.authorId
         let id = req.params.blogId
-        
+
         if(id.length != 24) {
             return res.status(400).send({status:false, msg: "Please enter proper length of author Id (24)"})
         }

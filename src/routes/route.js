@@ -20,4 +20,3 @@ router.delete('/blogs', middleware.authentication, middleware.authorizationForQu
 
 module.exports=router;
 
-
