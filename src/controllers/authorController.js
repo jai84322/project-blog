@@ -30,6 +30,10 @@ const createAuthor = async function (req, res) {
             return res.status(400).send({ status: false, msg: "title is missing" })
         }
 
+        if(!(title == "Mrs" || title == "Mr" || title == "Miss")) {
+           return res.status(401).send({error : "title has to be Mr or Mrs or Miss "})
+        }
+
         if (!email) {
             return res.status(400).send({ status: false, msg: "email is missing" })
         }

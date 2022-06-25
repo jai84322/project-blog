@@ -85,15 +85,16 @@ const updateBlogs = async function (req, res) {
                 title: title,
                 body: body,
                 category:category,
-                isPublished: isPublished,
+                isPublished: isPublished, 
                 authorId: authorId,
-                $push: { tags: tags, subcategory : subcategory},
+                $push: { tags: tags, subcategory : subcategory}
                 },  
             { new: true }
-        )
+        ) 
 
         if (updatedData.isPublished === true) {
             updatedData.publishedAt = Date.now()
+            await updatedData.save()
             return res.status(200).send({status:true, data: updatedData})
         }
 
@@ -109,13 +110,12 @@ const deleteBlogByPathParam = async function (req, res) {
     try {
         let blogId = req.params.blogId
 
-        let checkBlog = await blogModel.findById(blogId)
+        // let checkBlog = await blogModel.findById(blogId)
 
-        if (checkBlog.isDeleted === true) {
-            return res.status(400).send({ status: false, msg: "this document is already deleted" })
-        }
-
-        let deletedBlog = await blogModel.updateOne({ _id: blogId, isDeleted: false }, { isDeleted: true }, { new: true })
+        let deletedBlog = await blogModel.updateOne(
+            { _id: blogId, isDeleted: false }, 
+            {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
+            { new: true })
         return res.status(200).send({ status: true, data: deletedBlog })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -138,7 +138,7 @@ const deleteBlogsByQuery = async function (req, res) {
             { category: category },
             { subcategory: subcategory }] 
         }, 
-            { isDeleted: true }, 
+        {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
             { new: true })
 
         if (!deleteData[0]) {

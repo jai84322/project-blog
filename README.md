@@ -3,16 +3,16 @@
 https://github.com/sabihak89/radon/tree/project/blog#radon
 
 
-1- doubt = deletdAt ka doubt puchna hai - done - lagana hai  
+1- doubt = deletdAt ka doubt puchna hai - done - lagana hai  - done
 2- getblogs doubt = when giving multiple string in tags it should return the document (currently not working)
 - List of blogs that have a specific tag 
 List of blogs that have a specific subcategory example of a query url: blogs?filtername=filtervalue&f2=fv2
-que - can you check multiple values in one tag only ?? 
+que - can you check multiple values in one tag only ??  - done
 
-3- update api is not working for title but working for tags  - this is working now 
-4- authentication me token validation ka clear karna hai - remaining 
+3- update api is not working for title but working for tags  - this is working now  -done
 5- do we need to narrow down OR get all the documents which matches all the values of filter - done
-6- delete and update api me blogId nahi deta hai toh error handle karna hai ya nahi ? 
+4- authentication me token validation ka clear karna hai - remaining 
+6- delete and update api me blogId nahi deta hai toh error handle karna hai ya nahi ? - ye shayad se karna hi nahi h
 7- 
 
 https://github.com/jai84322/project-blog.git
