@@ -57,7 +57,7 @@ const createAuthor = async function (req, res) {
 
         let savedData = await authorModel.create(req.body)
         
-        return res.status(201).send({ status: true, data: savedData, msg: "New author created successfully"  })
+        return res.status(201).send({ status: true, data: savedData, msg: "New author is created successfully"  })
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
