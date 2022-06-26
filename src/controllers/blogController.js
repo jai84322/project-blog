@@ -6,10 +6,9 @@ const authorModel = require('../models/authorModel');
 const createBlog = async function (req, res) {
 
     try {
-        let data = req.body;
         let { title, body, authorId, category } = req.body;
 
-        if (Object.keys(data).length == 0) {
+        if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Please request data to be created" })
         }
 
@@ -42,12 +41,11 @@ const createBlog = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Please enter category" })
         }
 
-        let createdBlog = await blogModel.create(data)
+        let createdBlog = await blogModel.create(req.body)
         res.status(201).send({ status: true, data: createdBlog, msg: "Your blog has been created successfully" })
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }
-
 }
 
 // API- 3 || TO GET ALL BLOGS 
@@ -61,7 +59,7 @@ const getBlogs = async function (req, res) {
             return res.status(404).send({ status: false, msg: "no such document found" })
         }
 
-        return res.status(200).send({ status: true, data: blog, msg: "following blogs we found that matches your given search condition" })
+        return res.status(200).send({ status: true, data: blog, msg: "here all blogs are, related to your search" })
     } catch (err) {
        return res.status(500).send({ status: false, msg: err.message })
     }
@@ -71,11 +69,10 @@ const getBlogs = async function (req, res) {
 
 const updateBlogs = async function (req, res) {
     try {
-        let data = req.body
         let {title, body, authorId, category, isPublished, tags, subcategory} = req.body
         let blogId = req.params.blogId
 
-        if (Object.keys(data).length == 0) {
+        if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Please enter the data in the request body" })
         }
 
@@ -117,7 +114,7 @@ const deleteBlogByPathParam = async function (req, res) {
             { _id: blogId, isDeleted: false }, 
             {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
             { new: true })
-        return res.status(200).send({ status: true, data: deletedBlog, msg: "Now, this blog is deleted " })
+        return res.status(200).send({ status: true, data: deletedBlog, msg: "This blog is deleted" })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
