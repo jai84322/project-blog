@@ -43,7 +43,7 @@ const createBlog = async function (req, res) {
         }
 
         let createdBlog = await blogModel.create(data)
-        res.status(201).send({ status: true, data: createdBlog })
+        res.status(201).send({ status: true, data: createdBlog, msg: "Your blog has been created successfully" })
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }
@@ -61,7 +61,7 @@ const getBlogs = async function (req, res) {
             return res.status(404).send({ status: false, msg: "no such document found" })
         }
 
-        return res.status(200).send({ status: true, data: blog })
+        return res.status(200).send({ status: true, data: blog, msg: "following blogs we found that matches your given search condition" })
     } catch (err) {
        return res.status(500).send({ status: false, msg: err.message })
     }
@@ -92,13 +92,16 @@ const updateBlogs = async function (req, res) {
             { new: true }
         ) 
 
-        if (updatedData.isPublished === true) {
+        if (updatedData.isPublished == true) {
             updatedData.publishedAt = Date.now()
             await updatedData.save()
-            return res.status(200).send({status:true, data: updatedData})
+            return res.status(200).send({status:true, data: updatedData, msg : "data updated successfully"})
+        }else {
+            updatedData.publishedAt = null
+            await updatedData.save()
         }
 
-        return res.status(200).send({ status: true, data: updatedData })
+        return res.status(200).send({ status: true, data: updatedData, msg : "data updated successfully"})
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -109,15 +112,12 @@ const updateBlogs = async function (req, res) {
 const deleteBlogByPathParam = async function (req, res) {
     try {
         let blogId = req.params.blogId
-       
-
-        // let checkBlog = await blogModel.findById(blogId)
 
         let deletedBlog = await blogModel.updateOne(
             { _id: blogId, isDeleted: false }, 
             {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
             { new: true })
-        return res.status(200).send({ status: true, data: deletedBlog })
+        return res.status(200).send({ status: true, data: deletedBlog, msg: "Now, this blog is deleted " })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -132,7 +132,7 @@ const deleteBlogsByQuery = async function (req, res) {
 
         let deleteData = await blogModel.updateMany({ 
 
-            authorId : req.decodedToken.authorId, 
+            authorId : req.decodedToken.authorId,
             isDeleted: false, $or: [{ authorId: authorId },
             { isPublished: isPublished },
             { tags: tags },
@@ -142,12 +142,11 @@ const deleteBlogsByQuery = async function (req, res) {
         {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
             { new: true })
 
-            console.log(deleteData);
         if (deleteData.modifiedCount == 0) {
-            return res.status(404).send({status: false, msg : "document already deleted"})
+            return res.status(404).send({status: false, msg: "All documents are already deleted"})
         }
 
-        return res.status(200).send({ status: true, data: deleteData })
+        return res.status(200).send({ status: true, data: deleteData, msg: "Now, following blogs are deleted " })
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -160,3 +159,5 @@ module.exports.getBlogs = getBlogs;
 module.exports.updateBlogs = updateBlogs;
 module.exports.deleteBlogByPathParam = deleteBlogByPathParam
 module.exports.deleteBlogsByQuery = deleteBlogsByQuery
+
+

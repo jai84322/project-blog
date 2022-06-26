@@ -97,8 +97,6 @@ const loginAuthor = async function (req, res) {
             "WaJaiDhi-radon"
         )
 
-        // req["rightToken"] = token
-        // req.rightToken = token
         res.setHeader("x-api-key", token)
         
         return res.status(200).send({ status: true, data: token })
